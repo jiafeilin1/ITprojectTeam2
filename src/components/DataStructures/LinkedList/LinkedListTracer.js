@@ -1,163 +1,263 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable consistent-return */
 /* eslint-disable no-plusplus */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable max-classes-per-file */
+/* eslint-disable no-multiple-empty-lines */
+/* eslint-disable no-mixed-operators */
+/* eslint-disable arrow-parens */
+/* eslint-disable operator-linebreak */
+/* eslint-disable react/jsx-closing-bracket-location */
+/* eslint-disable react/jsx-closing-tag-location */
+/* eslint-disable react/jsx-max-props-per-line */
+/* eslint-disable react/jsx-one-expression-per-line */
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable react/jsx-indent-props */
+/* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable max-len */
+/* eslint-disable object-curly-newline */
+/* eslint-disable import/no-unresolved */
+
 import { cloneDeepWith } from 'lodash';
-import LinkedListRenderer from './LinkedListRenderer'; // Assume we have a renderer for linked lists
+import Tracer from '../common/Tracer';
+import LinkedListRenderer from './LinkedListRenderer';
 
-class LinkedListTracer {
-    constructor() {
-        this.head = null;
-        this.tail = null;
-        this.size = 0;
-        this.data = [];
-        this.chartTracer = null;
+export class Element {
+    constructor(value, key) {
+        this.value = value;
+        this.patched = 0;
+        this.selected = 0;
+        this.sorted = false;
+        this.key = key;
+        this.variables = [];
+        this.stack = [];
+        this.fill = 0;
     }
+}
 
+class LinkedListTracer extends Tracer {
     getRendererClass() {
         return LinkedListRenderer;
     }
 
-    init() {
-        this.chartTracer = null;
-        this.data = [];
-        this.head = null;
-        this.tail = null;
-        this.size = 0;
+    /**
+     * @param {array} array2d
+     * @param {string} algo used to mark if it is a specific algorithm
+     */
+    set(array2d = [], algo, kth = 1) {
+        this.data = array2d.map((array1d) =>
+            [...array1d].map((value, i) => new Element(value, i))
+        );
+        this.algo = algo;
+        this.kth = kth;
+        this.motionOn = true; // whether to use animation
+        this.hideArrayAtIdx = null; // to hide array at given index
+        this.listOfNumbers = '';
+        super.set();
     }
 
-    // Sets the linked list data structure
-    set(linkedList = [], algo) {
-        this.init();
-        linkedList.forEach((value) => this.append(value));
-        this.syncChartTracer();
+    patch(x, y, v = this.data[x][y].value) {
+        if (!this.data[x][y]) this.data[x][y] = new Element();
+        this.data[x][y].value = v;
+        this.data[x][y].patched++;
     }
 
-    // Appends a value to the linked list
-    append(value) {
-        const newNode = { value, next: null, variables: [] };
-        if (!this.head) {
-            this.head = newNode;
-            this.tail = newNode;
-        } else {
-            this.tail.next = newNode;
-            this.tail = newNode;
-        }
-        this.data.push(newNode);
-        this.size++;
+    depatch(x, y, v = this.data[x][y].value) {
+        this.data[x][y].patched--;
+        this.data[x][y].value = v;
     }
 
-    // Prepends a value to the linked list
-    prepend(value) {
-        const newNode = { value, next: this.head, variables: [] };
-        this.head = newNode;
-        if (!this.tail) {
-            this.tail = newNode;
-        }
-        this.data.unshift(newNode);
-        this.size++;
+    // used to highlight sorted elements
+    sorted(x, y) {
+        if (!this.data[x][y]) this.data[x][y] = new Element();
+        this.data[x][y].sorted = true;
     }
 
-    // Removes a node at a specific index
-    removeAt(index) {
-        if (index < 0 || index >= this.size) return;
-        let current = this.head;
-        if (index === 0) {
-            this.head = current.next;
-            this.data.shift();
-        } else {
-            let previous = null;
-            for (let i = 0; i < index; i++) {
-                previous = current;
-                current = current.next;
-            }
-            previous.next = current.next;
-            if (index === this.size - 1) {
-                this.tail = previous;
-            }
-            this.data.splice(index, 1);
-        }
-        this.size--;
-    }
+    select(sx, sy, ex = sx, ey = sy, c = '0') {
+        // Color blue
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                switch (c) {
+                    case '0':
+                        this.data[x][y].selected++;
+                        break;
+                    case '1':
+                        this.data[x][y].selected1 = true;
+                        break;
+                    case '2':
+                        this.data[x][y].selected2 = true;
+                        break;
+                    case '3':
+                        this.data[x][y].selected3 = true;
+                        break;
+                    case '4':
+                        this.data[x][y].selected4 = true;
+                        break;
+                    case '5':
+                        this.data[x][y].selected5 = true;
+                        break;
 
-    // Patches/highlights a node
-    patch(index, value) {
-        if (index >= 0 && index < this.size) {
-            this.data[index].value = value;
-        }
-    }
-
-    // Removes patch/highlight
-    depatch(index) {
-        if (index >= 0 && index < this.size) {
-            this.data[index].value = this.data[index].originalValue;
-        }
-    }
-
-    // Selects a node or a range of nodes
-    select(startIndex, endIndex = startIndex) {
-        for (let i = startIndex; i <= endIndex; i++) {
-            if (i >= 0 && i < this.size) {
-                this.data[i].selected = true;
+                    default:
+                        this.data[x][y].selected = true;
+                        break;
+                }
             }
         }
     }
 
-    // Deselects a node or a range of nodes
-    deselect(startIndex, endIndex = startIndex) {
-        for (let i = startIndex; i <= endIndex; i++) {
-            if (i >= 0 && i < this.size) {
-                this.data[i].selected = false;
+    // a simple fill function based on aia themes
+    // where green=1, yellow=2, and red=3
+    fill(sx, sy, ex = sx, ey = sy, c = 0) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].fill = c === 1 || c === 2 || c === 3 ? c : 0;
             }
         }
     }
 
-    // Swaps two nodes by index
-    swapNodes(index1, index2) {
-        if (index1 >= 0 && index1 < this.size && index2 >= 0 && index2 < this.size) {
-            const temp = this.data[index1].value;
-            this.data[index1].value = this.data[index2].value;
-            this.data[index2].value = temp;
+    // unfills the given element (used with fill)
+    unfill(sx, sy, ex = sx, ey = sy) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].fill = 0;
+            }
         }
     }
 
-    // Adds a variable to a specific node
-    addVariable(variable, index) {
-        if (index >= 0 && index < this.size) {
-            this.data[index].variables.push(variable);
+    // Set opacity to 0.3
+    fadeOut(sx, sy, ex = sx, ey = sy) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].faded = true;
+            }
         }
     }
 
-    // Removes a variable from all nodes
-    removeVariable(variable) {
-        this.data.forEach((node) => {
-            node.variables = node.variables.filter((val) => val !== variable);
-        });
-    }
-
-    // Clears all variables from the linked list
-    clearVariables() {
-        this.data.forEach((node) => {
-            node.variables = [];
-        });
-    }
-
-    // Assigns a variable to a specific node, removing it from all others
-    assignVariable(variable, index) {
-        this.clearVariables();
-        if (index >= 0 && index < this.size) {
-            this.addVariable(variable, index);
+    // Set opacity to 1
+    fadeIn(sx, sy, ex = sx, ey = sy) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].faded = false;
+            }
         }
     }
 
-    // Synchronizes the chart tracer
-    syncChartTracer() {
-        if (this.chartTracer) this.chartTracer.data = this.data;
+    // XXX for some reason, variables only seem to be displayed if
+    // row==2, and if you don't have enough rows in the table you are
+    // stuck unless you add an extra dummy row and hide it using hideArrayAtIndex
+    assignVariable(v, row, idx) {
+        // deep clone data so that changes to this.data are all made at the same time which will allow for tweening
+        // eslint-disable-next-line consistent-return
+        function customizer(val) {
+            if (val instanceof Element) {
+                const newEl = new Element(val.value, val.key);
+                if (val.patched) newEl.patched = true;
+                if (val.selected) newEl.selected = true;
+                if (val.sorted) newEl.sorted = true;
+                newEl.variables = val.variables;
+                return newEl;
+            }
+        }
+        const newData = cloneDeepWith(this.data, customizer);
+
+        // remove all current occurences of the variable
+        for (let y = 0; y < newData[row].length; y++) {
+            newData[row][y].variables = newData[row][y].variables.filter(
+                (val) => val !== v
+            );
+        }
+
+        // add variable to item if not undefined or null
+        if (idx !== null && idx !== undefined)
+            newData[row][idx].variables.push(v);
+
+        // update this.data
+        this.data = newData;
     }
 
-    // Returns a string representation of the linked list
-    stringTheContent() {
-        return this.data.map((node) => node.value).join(' -> ');
+    /**
+     * Whether to use animation. Could be used to immediately update the state.
+     * For instance, where there are two 'distinct' operation and the sliding motion complicates.
+     * @param {*} bool
+     */
+    setMotion(bool = true) {
+        this.motionOn = bool;
+    }
+
+    // style = { backgroundStyle: , textStyle: }
+    styledSelect(style, sx, sy, ex = sx, ey = sy) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].selected++;
+                this.data[x][y].style = style;
+            }
+        }
+    }
+
+    selectRow(x, sy, ey, c = '0') {
+        this.select(x, sy, x, ey, c);
+    }
+
+    selectCol(y, sx, ex, c = '0') {
+        this.select(sx, y, ex, y, c);
+    }
+
+    deselect(sx, sy, ex = sx, ey = sy) {
+        for (let x = sx; x <= ex; x++) {
+            for (let y = sy; y <= ey; y++) {
+                this.data[x][y].selected = false;
+                this.data[x][y].selected1 = false;
+                this.data[x][y].selected2 = false;
+                this.data[x][y].selected3 = false;
+                this.data[x][y].selected4 = false;
+                this.data[x][y].selected5 = false;
+                this.data[x][y].style = undefined;
+            }
+        }
+    }
+
+    deselectRow(x, sy, ey) {
+        this.deselect(x, sy, x, ey);
+    }
+
+    deselectCol(y, sx, ex) {
+        this.deselect(sx, y, ex, y);
+    }
+
+    showKth(k = '0') {
+        this.kth = k;
+    }
+
+    // caption for arrays (undefined means no caption, [] may result in a blank
+    // caption, depending on the algorithm - there may be extra text)
+    setList(array) {
+        if (array)
+            this.listOfNumbers = array.join(', ');
+        else
+            this.listOfNumbers = undefined;
+    }
+
+    getKth() {
+        return this.kth;
+    }
+
+    /**
+     * Hides the array at the given index.
+     * @param {*} index the index of the array to hide.
+     */
+    hideArrayAtIndex(index) {
+        this.hideArrayAtIdx = index;
+    }
+
+    /**
+     * Updates the value at the given position of the array.
+     * @param {*} x the row index.
+     * @param {*} y the column index.
+     * @param {*} newValue the new value.
+     */
+    updateValueAt(x, y, newValue) {
+        if (!this.data[x] || !this.data[x][y]) {
+            return;
+        }
+        this.data[x][y].value = newValue;
     }
 }
 

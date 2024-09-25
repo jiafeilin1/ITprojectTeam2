@@ -1,114 +1,208 @@
 @import "../../common/stylesheet/index";
 
-.linked_list {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  flex-wrap: wrap;
 
-  .node {
-    display: flex;
-    align-items: center;
-    background-color: var(--linked-list-node-bg);
-    border: 2px solid var(--linked-list-node-border);
-    border-radius: 8px;
-    padding: 10px;
-    margin: 0 10px;
-    min-width: 60px;
+.array_2d {
+  flex-shrink: 0;
+  display: table;
+  border-collapse: collapse;
+
+  .bottom_caption {
+    // centres 'caption' (kth) below array
+    caption-side: bottom;
     text-align: center;
-
-    .value {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--linked-list-node-value-color);
-    }
-
-    &.head {
-      background-color: var(--linked-list-head-bg);
-      border-color: var(--linked-list-head-border);
-
-      .value {
-        color: var(--linked-list-head-value-color);
-      }
-    }
-
-    &.tail {
-      background-color: var(--linked-list-tail-bg);
-      border-color: var(--linked-list-tail-border);
-
-      .value {
-        color: var(--linked-list-tail-value-color);
-      }
-    }
-
-    &.selected {
-      background-color: var(--linked-list-selected-bg);
-      border-color: var(--linked-list-selected-border);
-
-      .value {
-        color: var(--linked-list-selected-value-color);
-      }
-    }
-
-    &.highlighted {
-      background-color: var(--linked-list-highlighted-bg);
-      border-color: var(--linked-list-highlighted-border);
-
-      .value {
-        color: var(--linked-list-highlighted-value-color);
-      }
-    }
+    margin-top: 15px;
+    font-size: 13px;
+    color: var(--array-2d-row-col-value-color);
+    font-family: Menlo, "Liberation Mono", Courier, monospace;
   }
 
-  .arrow {
-    width: 40px;
-    height: 2px;
-    background-color: var(--linked-list-arrow-color);
-    position: relative;
-    margin: 0 5px;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      right: -10px;
-      border: 6px solid transparent;
-      border-left-color: var(--linked-list-arrow-color);
-    }
+  .pseudocode_function {
+    color: var(--right-code-function-font);
   }
 
-  .caption {
+  .top_variable {
+    // for indices across the top of the array
     text-align: center;
-    font-size: 14px;
-    color: var(--linked-list-caption-color);
-    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--array-2d-row-col-value-color);
+    margin-bottom: -5px;
+  }
+
+  .row {
+    display: table-row;
+    height: 28px;
+
+
+    .col {
+      display: table-cell;
+      text-align: center;
+      min-width: 8px;
+      width: 28px;
+      background-color: var(--array-2d-row-col-bg);
+      border: 1px solid var(--array-2d-row-col-border);
+      padding: 0 4px;
+
+      .value {
+        font-size: 12px;
+        color: var(--array-2d-row-col-value-color);
+
+      }
+
+      .variable {
+        font-size: 18px;
+        color: var(--array-2d-row-col-value-color); //var(--array-2d-row-col-sorted);
+      }
+
+      &.selected {
+        background-color: var(--array-2d-row-col-bg-selected);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.selected1 {
+        background-color: var(--array-2d-row-col-bg-selected1);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.selected2 {
+        background-color: var(--array-2d-row-col-bg-selected2);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.selected3 {
+        background-color: var(--array-2d-row-col-bg-selected3);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.variableGreen {
+        background-color: var(--simple-fill-var-green);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.variableOrange {
+        // more of a yellow, really
+        background-color: var(--simple-fill-var-orange);
+
+        span {
+          color: var(--array-2d-row-col);
+        }
+      }
+
+      &.variableRed {
+        background-color: var(--simple-fill-var-red);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+
+      &.selected4 {
+        background-color: var(--array-2d-row-col-bg-selected4);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+      &.selected5 {
+        background-color: var(--array-2d-row-col-bg-selected5);
+
+        span {
+          color: var(--array-2d-row-col-selected);
+        }
+      }
+
+
+
+      &.patched {
+        background-color: var(--array-2d-row-col-bg-patched);
+
+        span {
+          color: var(--array-2d-row-col-patched);
+        }
+
+      }
+
+      &.sorted {
+        background-color: var(--array-2d-row-bg-sorted);
+
+        span {
+          color: var(--array-2d-row-col-sorted);
+        }
+      }
+
+
+
+      &.index {
+        background: var(--array-2d-row-col-bg-index);
+        border: var(--array-2d-row-col-border-index);
+        color: var(--array-2d-row-col-color-index);
+
+      }
+
+      &.variables {
+        background: var(--array-2d-row-col-bg-index);
+        border: var(--array-2d-row-col-border-index);
+        color: var(--array-2d-row-col-color-index);
+        vertical-align: text-top;
+
+      }
+
+      &.faded {
+        opacity: 0.2
+      }
+
+    }
   }
 }
 
-// Sample color variable definitions (to be included in your variables file or inline)
-:root {
-  --linked-list-node-bg: #ffffff;
-  --linked-list-node-border: #cccccc;
-  --linked-list-node-value-color: #333333;
+.captionDFS {
+  caption-side: bottom;
+  text-align: right;
+  margin-top: -12px; // need to squeeze a bit
+  color: var(--array-2d-row-col-value-color);
+}
 
-  --linked-list-head-bg: #d1e7dd;
-  --linked-list-head-border: #0f5132;
-  --linked-list-head-value-color: #0f5132;
+.captionBFS {
+  caption-side: bottom;
+  text-align: center;
+  margin-top: -12px; // need to squeeze a bit
+  color: var(--array-2d-row-col-value-color);
+}
 
-  --linked-list-tail-bg: #f8d7da;
-  --linked-list-tail-border: #842029;
-  --linked-list-tail-value-color: #842029;
+.captionDFSrec {
+  caption-side: bottom;
+  margin-top: -12px; // doesn't hurt to squeeze a bit like above
+  text-align: right;
+  color: var(--array-2d-row-col-value-color);
+}
 
-  --linked-list-selected-bg: #cfe2ff;
-  --linked-list-selected-border: #084298;
-  --linked-list-selected-value-color: #084298;
+.captionmsort_lista_td {
+  caption-side: bottom;
+  font-size: 14px; // squeeze a bit
+  text-align: right;
+  color: var(--array-2d-row-col-value-color);
+}
 
-  --linked-list-highlighted-bg: #fff3cd;
-  --linked-list-highlighted-border: #856404;
-  --linked-list-highlighted-value-color: #856404;
-
-  --linked-list-arrow-color: #6c757d;
-
-  --linked-list-caption-color: #6c757d;
+// redefined in 1D array
+.captionmsort_arr_td {
+  caption-side: bottom;
+  text-align: right;
+  color: var(--array-2d-row-col-value-color);
 }
