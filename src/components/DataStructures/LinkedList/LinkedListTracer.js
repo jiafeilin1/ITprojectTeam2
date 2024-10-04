@@ -54,12 +54,12 @@ class LinkedListTracer extends Tracer{
         list.size++;
     }
 
-    // TO DO Appends a value to a specific list by index
+    // TO DO: append a value to a specific list by index
     addToList(value, listIndex = 0) {
         // TO DO
     }
 
-    // TO DO Removes a node at a specific index from a specific list
+    // TO DO: Removes a node at a specific index from a specific list
     removeAt(index, listIndex = 0) {
         // REWRITE
         const list = this.lists[listIndex];
@@ -111,6 +111,7 @@ class LinkedListTracer extends Tracer{
 
         const left = data.slice(0,nodeIndex);
         const right = data.slice(nodeIndex);
+
 
         // Old list
         this.deleteList(key);
