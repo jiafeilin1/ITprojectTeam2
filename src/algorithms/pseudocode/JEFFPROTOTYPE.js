@@ -9,8 +9,8 @@ Split \\B 2
 Move list to Second layer \\B 3
 Select first node \\B 4
 Adjust pointers \\B 5
-Set as sorted \\B 6
-Mergesort(head) \\B 7
+Sort and merge lists \\B 6
+delete \\B 7
 Mergesort(head) \\B 8
 Mergesort(head) \\B 9
 Mergesort(head) \\B 10

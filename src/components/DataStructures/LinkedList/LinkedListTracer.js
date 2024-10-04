@@ -15,7 +15,7 @@ class LinkedListTracer extends Tracer{
     init() {
         this.key = 0;
         this.nodeKey = 0;
-        this.chartTracer = null;
+        this.Renderer = null;
         this.lists = [];
     }
 
@@ -87,7 +87,7 @@ class LinkedListTracer extends Tracer{
 
     // set angle based on degree of rotation.
     setArrow(nodeIndex, listIndex, layerIndex, direction) {
-        console.assert(Math.abs(direction)===45, "Invalid arrow Direction");
+        console.assert(Math.abs(direction)%45===0, "Invalid arrow Direction");
 
         const node = this.findList(listIndex,  layerIndex).data[nodeIndex];
         node.arrow = direction;
@@ -112,12 +112,38 @@ class LinkedListTracer extends Tracer{
         const left = data.slice(0,nodeIndex);
         const right = data.slice(nodeIndex);
 
-
         // Old list
         this.deleteList(key);
 
         this.addList(left,"nodes", listIndex, layerIndex);
         this.addList(right, "nodes", listIndex + 1, layerIndex);
+    }
+
+    // Merge list 1 onto destination list 2.
+    // TO DO: change variable names to be more intuitive.
+    mergesort(listIndex1, layerIndex1, listIndex2, layerIndex2) {
+        const oldList = this.findList(listIndex1, layerIndex1);
+        const {key, data} = oldList;
+        const list =  this.findList(listIndex2, layerIndex2);
+
+        for (let node of data) {
+            this.appendToList(node, list);
+        }
+
+        for (let index in list.data) {
+            this.setArrow(index,listIndex2, layerIndex2, 0);
+            this.patch(index, listIndex2, layerIndex2);
+        }
+
+        this.deleteList(key);
+        this.sortList(listIndex2,listIndex1);
+    }
+
+    sortList(listIndex, layerIndex) {
+        const list =  this.findList(listIndex, layerIndex);
+        if (list) {
+            list.data.sort((a, b) => a.value - b.value); // Sort by the 'value' property of nodes
+        }
     }
 
     deleteList(key) {
@@ -279,11 +305,16 @@ class LinkedListTracer extends Tracer{
         this.addVariable(variable, nodeIndex, listIndex);
     }
 
-    // Synchronizes the chart tracer
+    // Updates Renderer
     syncChartTracer() {
-        if (this.chartTracer) {
-            this.chartTracer.data = this.lists.map(list => list.data); // Sync all lists with the tracer
+        /*
+        if (!this.Renderer) {
+            const rendererClass = this.getRendererClass()
+            this.Renderer = new rendererClass(this);
         }
+        this.Renderer.data = this.data;
+        this.Renderer.render();
+         */
     }
 
     // Returns a string representation of all linked lists

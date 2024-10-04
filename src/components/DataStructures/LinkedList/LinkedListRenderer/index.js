@@ -65,7 +65,6 @@ class LinkedListRenderer extends Renderer {
                                             >
                                                 {/* Nodes */}
                                                 <div className={classes(styles.value)}>
-                                                    {console.log(node.key)}
                                                     {node.value}
                                                 </div>
 

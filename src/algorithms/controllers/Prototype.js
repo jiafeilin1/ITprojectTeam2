@@ -89,7 +89,7 @@ export default {
         chunker.add(
             6,
             (vis) => {
-                vis.list.patch(0,0,0);
+                vis.list.mergesort(0,1,0,0);
             },
         );
     }
