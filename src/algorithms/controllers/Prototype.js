@@ -34,15 +34,15 @@ export default {
 
         const swapAction = (bookmark, n1, n2) => {
             chunker.add(bookmark, (vis, _n1, _n2) => {
-                vis.list.swap(0, _n1, _n2);  // Modified to use the `swap` method from LinkedListTracer
+                vis.list.swap(0, _n1, _n2);  // Use the `swap` method from LinkedListTracer
             }, [n1, n2]);
         };
 
-        // Initialise
+        // Initialise the list
         chunker.add(
             1,
             (vis, list) => {
-                vis.list.set([list]);  // Set a single list in an array as LinkedListTracer expects lists
+                vis.list.set([list]);  // Use LinkedListTracer's `set` method correctly
             },
             [nodes]
         );
@@ -81,7 +81,6 @@ export default {
         chunker.add(
             204,
             (vis) => {
-                vis.list.clearLabels(0);  // Clear all labels (assuming you add this method)
                 vis.list.assignVariable("Left", 0, 0);  // Label the left part
                 vis.list.assignVariable("Right", 0, slow + 1);  // Label the right part
                 vis.list.select(0, slow + 1);  // Select the node at `slow + 1`

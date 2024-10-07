@@ -30,9 +30,13 @@ class LinkedListTracer extends Tracer {
     }
 
     set(listsData = []) {
-        this.lists = listsData.length ? listsData.map(listData => listData.map((value) => new Element(value))) : [];
-        this.motionOn = true; // whether to use animation
-        this.hideListAtIdx = null; // to hide a list at a given index
+        if (!Array.isArray(listsData)) {
+            console.error("listsData should be an array");
+            return;
+        }
+        this.lists = listsData.length ? listsData.map(listData => listData.map((value) => new Element(value))) : [[]];  // Ensure an empty array if listsData is empty
+        this.motionOn = true;
+        this.hideListAtIdx = null;
         super.set();
     }
 
