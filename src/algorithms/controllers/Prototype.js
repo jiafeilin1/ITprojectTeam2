@@ -1,12 +1,6 @@
 /* eslint-disable no-multi-spaces,indent,prefer-destructuring,brace-style */
-/*
-import {areExpanded} from './collapseChunkPlugin';
- */
-import ListTracer from "../../components/DataStructures/List/ListTracer";
 
-
-
-
+import LinkedListTracer from "../../components/DataStructures/LinkedList/LinkedListTracer";
 
 const LL_BOOKMARKS = {
     LL_default: 1,
@@ -27,21 +21,20 @@ export default {
     initVisualisers() {
         return {
             list: {
-                instance: new ListTracer('list', null, 'List Prototype', { arrayItemMagnitudes: true }),
+                instance: new LinkedListTracer('list', null, 'List Prototype', { arrayItemMagnitudes: true }),
                 order: 0,
             }
         };
     },
 
-
     run(chunker, { nodes }) {
-
         const A = [...nodes];
         let n = nodes.length;
         let slow;
+
         const swapAction = (bookmark, n1, n2) => {
             chunker.add(bookmark, (vis, _n1, _n2) => {
-                vis.list.swapElements(_n1, _n2);
+                vis.list.swap(0, _n1, _n2);  // Modified to use the `swap` method from LinkedListTracer
             }, [n1, n2]);
         };
 
@@ -49,7 +42,7 @@ export default {
         chunker.add(
             1,
             (vis, list) => {
-                vis.list.set(list);
+                vis.list.set([list]);  // Set a single list in an array as LinkedListTracer expects lists
             },
             [nodes]
         );
@@ -58,15 +51,15 @@ export default {
         chunker.add(
             2,
             (vis) => {
-                vis.list.select(0);
+                vis.list.select(0, 0);  // Selecting the first node in the list
             },
         );
 
         chunker.add(
             201,
             (vis) => {
-                vis.list.addLabel(0, "Slow");
-                vis.list.addLabel(0, "Fast");
+                vis.list.assignVariable("Slow", 0, 0);  // Assign "Slow" label to the first node
+                vis.list.assignVariable("Fast", 0, 0);  // Assign "Fast" label to the first node
             },
         );
 
@@ -78,8 +71,8 @@ export default {
             chunker.add(
                 203,
                 (vis) => {
-                    vis.list.setLabel('Slow', i);
-                    vis.list.setLabel('Fast', fast);
+                    vis.list.assignVariable('Slow', 0, i);  // Move "Slow" label to the `i-th` node
+                    vis.list.assignVariable('Fast', 0, fast);  // Move "Fast" label to the `fast-th` node
                 },
             );
             chunker.add(202);
@@ -88,12 +81,11 @@ export default {
         chunker.add(
             204,
             (vis) => {
-                vis.list.clearLabels();
-                vis.list.addLabel(0, "Left");
-                vis.list.addLabel(slow + 1, "Right");
-                vis.list.select(slow + 1);
-            })
+                vis.list.clearLabels(0);  // Clear all labels (assuming you add this method)
+                vis.list.assignVariable("Left", 0, 0);  // Label the left part
+                vis.list.assignVariable("Right", 0, slow + 1);  // Label the right part
+                vis.list.select(0, slow + 1);  // Select the node at `slow + 1`
+            }
+        );
     }
-
-
 };

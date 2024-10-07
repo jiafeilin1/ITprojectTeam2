@@ -30,9 +30,7 @@ class LinkedListTracer extends Tracer {
     }
 
     set(listsData = []) {
-        this.lists = listsData.map(listData =>
-            listData.map((value) => new Element(value))
-        );
+        this.lists = listsData.length ? listsData.map(listData => listData.map((value) => new Element(value))) : [];
         this.motionOn = true; // whether to use animation
         this.hideListAtIdx = null; // to hide a list at a given index
         super.set();
@@ -227,8 +225,13 @@ class LinkedListTracer extends Tracer {
     }
 
     clear(listIndex) {
-        this.lists[listIndex] = [];
-        this.syncChartTracer();
+        if (this.lists[listIndex]) {
+            this.lists[listIndex] = [];  // Clear the list
+            this.syncChartTracer();      // Ensure the renderer is updated
+            if (this.chartTracer) {
+                this.chartTracer.update();  // Force an update in the renderer
+            }
+        }
     }
 
     setList(array) {
